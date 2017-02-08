@@ -17,6 +17,7 @@ import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.KeyListener;
 
 public class NexTaskView {
 	
@@ -28,6 +29,14 @@ public class NexTaskView {
 	private Button nexTaskButton;
 	private int componentWidth = getWidth() - SPACING;
 			
+	
+	public NexTaskView() {
+		shell = new Shell();
+		nexTaskButton = new Button(shell,SWT.NONE);
+		taskList = new List(shell, SWT.BORDER);
+		inputField = new Text(shell, SWT.BORDER);
+	}
+	
 	/**
 	 * Open the window.
 	 * @wbp.parser.entryPoint
@@ -48,7 +57,6 @@ public class NexTaskView {
 	 * Create contents of the window.
 	 */
 	protected void createContents() {
-		shell = new Shell();
 		shell.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		shell.setSize(getWidth(), getHeight());
 		shell.setText(APP_NAME);
@@ -58,19 +66,14 @@ public class NexTaskView {
 		shell.setLayout(rl_shell);
 		shell.setMaximized(false);
 		
-		nexTaskButton = new Button(shell, SWT.NONE);
 		nexTaskButton.setFont(SWTResourceManager.getFont("Georgia", 40, SWT.NORMAL));
 		nexTaskButton.setLayoutData(new RowData(componentWidth, (int)(getHeight() * .1)));
 		nexTaskButton.setText(APP_NAME);
-		
-		taskList = new List(shell, SWT.BORDER);
+
 		taskList.setLayoutData(new RowData(componentWidth, (int)(getHeight() * .75)));
 		
-		inputField = new Text(shell, SWT.BORDER);
 		inputField.setTouchEnabled(true);
 		inputField.setLayoutData(new RowData(componentWidth, (int)(getHeight() * .098) ));
-		
-
 	}
 	
 	public int getWidth() {
@@ -79,6 +82,22 @@ public class NexTaskView {
 	
 	public int getHeight() {				
 		return GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().height;
+	}
+	
+	public void addEnterKeyListener(KeyListener listener) {
+		inputField.addKeyListener(listener);
+	}
+	
+	public String getText() {
+		return inputField.getText();
+	}
+	
+	public void clearText() {
+		inputField.setText("");
+	}
+	
+	public void addTask(String str) {
+		taskList.add(str);
 	}
 	
 	

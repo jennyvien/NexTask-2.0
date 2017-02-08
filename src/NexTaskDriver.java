@@ -20,7 +20,9 @@ public class NexTaskDriver {
 //		taskListCollection.put("Test", list);
 		
 		try {
+			TaskList taskList = new TaskList("New List");
 			NexTaskView window = new NexTaskView();
+			NexTaskController controller = new NexTaskController(window, taskList);
 			window.open();
 		} catch (Exception e) {
 			e.printStackTrace();
