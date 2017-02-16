@@ -36,6 +36,9 @@ public class NexTaskView implements Observer {
 	private Button nexTaskButton;
 	private int componentWidth = getWidth() - SPACING;
 	private TaskList taskList;
+	
+	private boolean editMode;
+	private int itemInEdit;
 
 	public NexTaskView(TaskList list) {
 		shell = new Shell();
@@ -45,6 +48,9 @@ public class NexTaskView implements Observer {
 
 		this.taskList = list;
 		this.taskList.addObserver(this);
+		
+		this.editMode = false;
+		this.itemInEdit = -1;
 	}
 
 	/**
@@ -85,6 +91,14 @@ public class NexTaskView implements Observer {
 		inputField.setTouchEnabled(true);
 		inputField.setLayoutData(new RowData(componentWidth, (int) (getHeight() * .098)));
 	}
+	
+	public void setEditMode(boolean b) {
+		this.editMode = b;
+	}
+	
+	public boolean isEditMode() {
+		return this.editMode;
+	}
 
 	// ... Helper methods to get the height and width of the components 
 	public int getWidth() {
@@ -110,6 +124,22 @@ public class NexTaskView implements Observer {
 	
 	public void addTextFieldKeyListener(KeyListener listener) {
 		inputField.addKeyListener(listener);
+	}
+	
+	public int getItemInEdit() {
+		return this.itemInEdit;
+	}
+	
+	public void setItemInEdit(int i) {
+		this.itemInEdit = i;
+	}
+	
+	public void editItem(int i) {
+		this.setEditMode(true);
+		this.setItemInEdit(i);
+		inputField.setText(taskListView.getItem(i));
+		inputField.setFocus();
+		inputField.setSelection(inputField.getText().length());
 	}
 	
 	// ... Methods related to the list

@@ -38,6 +38,13 @@ public class TaskList extends ArrayList<Task> implements Observable{
 		}
 	}
 	
+	public void edit(int i, String newSpec) {
+		if(isIndexInBound(i)) {
+			this.get(i).setSpecification(newSpec);
+			notifyObservers();
+		}
+	}
+	
 	private boolean isIndexInBound(int i) {
 		return (i >= 0 && i < this.size()) ? true : false;
 	}

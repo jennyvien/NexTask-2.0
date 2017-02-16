@@ -19,7 +19,6 @@ public class NexTaskController {
 		this.taskList = list;
 		this.view.addTextFieldKeyListener(new TextFieldKeyListener());
 		this.view.addListKeyListener(new ListKeyListener());
-
 	}
 
 	/**
@@ -31,8 +30,12 @@ public class NexTaskController {
 		@Override
 		public void keyPressed(KeyEvent e) {
 			if (e.character == '\r') {
-				String taskSpec = view.getText();
-				taskList.add(new Task(taskSpec));
+				if(!view.isEditMode()) {
+					taskList.add(new Task(view.getText()));
+				} else {
+					taskList.edit(view.getItemInEdit(), view.getText());
+					view.setEditMode(false);
+				}
 				view.clearText();
 			}
 		}
@@ -47,11 +50,10 @@ public class NexTaskController {
 
 		@Override
 		public void keyPressed(KeyEvent e) {
+			int i = view.getItemInFocus();
 			if(e.character == '\r') {
-				System.out.println("ENTER DETECTED");
+				view.editItem(i);
 			} else if(e.character == SWT.DEL) {
-				System.out.println("DELETE DETECTED");
-				int i = view.getItemInFocus();
 				taskList.remove(i);
 			}
 		}
