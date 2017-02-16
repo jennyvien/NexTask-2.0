@@ -19,24 +19,34 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.KeyListener;
 
-public class NexTaskView {
-	
+/**
+ * NexTaskView is observing the model. If there are updates in the model, the
+ * view will be updated accordingly. 
+ * 
+ * @author Jenny
+ *
+ */
+public class NexTaskView implements Observer {
+
 	private final String APP_NAME = "NexTask.";
 	private final int SPACING = 50;
 	protected Shell shell;
 	private Text inputField;
-	private List taskList;
+	private List taskListView;
 	private Button nexTaskButton;
 	private int componentWidth = getWidth() - SPACING;
-			
-	
-	public NexTaskView() {
+	private TaskList taskList;
+
+	public NexTaskView(TaskList list) {
 		shell = new Shell();
-		nexTaskButton = new Button(shell,SWT.NONE);
-		taskList = new List(shell, SWT.BORDER);
+		nexTaskButton = new Button(shell, SWT.NONE);
+		taskListView = new List(shell, SWT.BORDER);
 		inputField = new Text(shell, SWT.BORDER);
+
+		this.taskList = list;
+		this.taskList.addObserver(this);
 	}
-	
+
 	/**
 	 * Open the window.
 	 * @wbp.parser.entryPoint
@@ -65,40 +75,60 @@ public class NexTaskView {
 		rl_shell.center = true;
 		shell.setLayout(rl_shell);
 		shell.setMaximized(false);
-		
+
 		nexTaskButton.setFont(SWTResourceManager.getFont("Georgia", 40, SWT.NORMAL));
-		nexTaskButton.setLayoutData(new RowData(componentWidth, (int)(getHeight() * .1)));
+		nexTaskButton.setLayoutData(new RowData(componentWidth, (int) (getHeight() * .1)));
 		nexTaskButton.setText(APP_NAME);
 
-		taskList.setLayoutData(new RowData(componentWidth, (int)(getHeight() * .75)));
-		
+		taskListView.setLayoutData(new RowData(componentWidth, (int) (getHeight() * .75)));
+
 		inputField.setTouchEnabled(true);
-		inputField.setLayoutData(new RowData(componentWidth, (int)(getHeight() * .098) ));
+		inputField.setLayoutData(new RowData(componentWidth, (int) (getHeight() * .098)));
 	}
-	
+
+	// ... Helper methods to get the height and width of the components 
 	public int getWidth() {
 		return Toolkit.getDefaultToolkit().getScreenSize().width / 5;
 	}
-	
-	public int getHeight() {				
+
+	public int getHeight() {
 		return GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().height;
 	}
 	
-	public void addEnterKeyListener(KeyListener listener) {
-		inputField.addKeyListener(listener);
-	}
-	
+	// ... Methods related to the text field
 	public String getText() {
 		return inputField.getText();
 	}
-	
+
 	public void clearText() {
 		inputField.setText("");
 	}
-	
+
 	public void addTask(String str) {
-		taskList.add(str);
+		taskListView.add(str);
+	}
+	
+	public void addTextFieldKeyListener(KeyListener listener) {
+		inputField.addKeyListener(listener);
+	}
+	
+	// ... Methods related to the list
+	public void addListKeyListener(KeyListener listener) {
+		taskListView.addKeyListener(listener);
+	}
+	
+	public int getItemInFocus() {
+		return taskListView.getFocusIndex();
+	}
+	
+	@Override
+	public void update() {
+		taskListView.removeAll();
+		for(int i = 0; i < taskList.size(); i++) {
+			taskListView.add(taskList.get(i).toString());
+		}
 	}
 	
 	
+
 }
