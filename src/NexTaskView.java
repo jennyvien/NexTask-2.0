@@ -18,6 +18,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.widgets.TabFolder;
 
 /**
  * NexTaskView is observing the model. If there are updates in the model, the
@@ -36,9 +37,12 @@ public class NexTaskView implements Observer {
 	private Button nexTaskButton;
 	private int componentWidth = getWidth() - SPACING;
 	private TaskList taskList;
+	private TabFolder taskFolder;
+	private TaskListCollection taskListCollection;
 	
 	private boolean editMode;
 	private int itemInEdit;
+
 
 	public NexTaskView(TaskList list) {
 		shell = new Shell();
@@ -51,12 +55,11 @@ public class NexTaskView implements Observer {
 		
 		this.editMode = false;
 		this.itemInEdit = -1;
+		
+		this.open();
 	}
 
-	/**
-	 * Open the window.
-	 * @wbp.parser.entryPoint
-	 */
+
 	public void open() {
 		Display display = Display.getDefault();
 		createContents();
@@ -69,9 +72,6 @@ public class NexTaskView implements Observer {
 		}
 	}
 
-	/**
-	 * Create contents of the window.
-	 */
 	protected void createContents() {
 		shell.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		shell.setSize(getWidth(), getHeight());
@@ -87,17 +87,9 @@ public class NexTaskView implements Observer {
 		nexTaskButton.setText(APP_NAME);
 
 		taskListView.setLayoutData(new RowData(componentWidth, (int) (getHeight() * .75)));
-
+		
 		inputField.setTouchEnabled(true);
 		inputField.setLayoutData(new RowData(componentWidth, (int) (getHeight() * .098)));
-	}
-	
-	public void setEditMode(boolean b) {
-		this.editMode = b;
-	}
-	
-	public boolean isEditMode() {
-		return this.editMode;
 	}
 
 	// ... Helper methods to get the height and width of the components 
@@ -110,14 +102,6 @@ public class NexTaskView implements Observer {
 	}
 	
 	// ... Methods related to the text field
-	public String getText() {
-		return inputField.getText();
-	}
-
-	public void clearText() {
-		inputField.setText("");
-	}
-
 	public void addTask(String str) {
 		taskListView.add(str);
 	}
@@ -126,20 +110,12 @@ public class NexTaskView implements Observer {
 		inputField.addKeyListener(listener);
 	}
 	
-	public int getItemInEdit() {
-		return this.itemInEdit;
+	public void clearText() {
+		inputField.setText("");
 	}
 	
-	public void setItemInEdit(int i) {
-		this.itemInEdit = i;
-	}
-	
-	public void editItem(int i) {
-		this.setEditMode(true);
-		this.setItemInEdit(i);
-		inputField.setText(taskListView.getItem(i));
-		inputField.setFocus();
-		inputField.setSelection(inputField.getText().length());
+	public String getText() {
+		return inputField.getText();
 	}
 	
 	// ... Methods related to the list
@@ -159,6 +135,27 @@ public class NexTaskView implements Observer {
 		}
 	}
 	
+	// ... Methods related to editing an item on the list.
+	public int getItemInEdit() {
+		return this.itemInEdit;
+	}
+	
+	public boolean isEditMode() {
+		return this.editMode;
+	}
+	
+	public void startEditMode(int i) {
+		this.editMode = true;
+		this.itemInEdit = i;
+		inputField.setText(taskListView.getItem(i));
+		inputField.setFocus();
+		inputField.setSelection(inputField.getText().length());
+	}
+	
+	public void endEditMode() {
+		this.itemInEdit = -1;
+		this.editMode = false;
+	}
 	
 
 }

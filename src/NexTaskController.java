@@ -22,19 +22,40 @@ public class NexTaskController {
 	}
 
 	/**
+	 * Listener for the list! It detects if a modification wants to made to the
+	 * list. If the user wants to edit and item on the list, hit enter. If the
+	 * user wants to delete an item from the list, hit delete. If the user wants
+	 * to mark an item as complete on the list, hit the space bar.
+	 */
+	class ListKeyListener implements KeyListener {
+		@Override
+		public void keyPressed(KeyEvent e) {
+			int i = view.getItemInFocus();
+			if (e.character == '\r') {
+				view.startEditMode(i);
+			} else if (e.character == SWT.DEL) {
+				taskList.remove(i);
+			}
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+		}
+	}
+
+	/**
 	 * Listener for text field. It detects if the enter key has been pressed. If
-	 * so, it will add the new task to the list.
+	 * so, it will add or edit a task accordingly.
 	 */
 	class TextFieldKeyListener implements KeyListener {
-
 		@Override
 		public void keyPressed(KeyEvent e) {
 			if (e.character == '\r') {
-				if(!view.isEditMode()) {
+				if (!view.isEditMode()) {
 					taskList.add(new Task(view.getText()));
 				} else {
 					taskList.edit(view.getItemInEdit(), view.getText());
-					view.setEditMode(false);
+					view.endEditMode();
 				}
 				view.clearText();
 			}
@@ -43,24 +64,6 @@ public class NexTaskController {
 		@Override
 		public void keyReleased(KeyEvent e) {
 		}
-
-	}
-
-	class ListKeyListener implements KeyListener {
-
-		@Override
-		public void keyPressed(KeyEvent e) {
-			int i = view.getItemInFocus();
-			if(e.character == '\r') {
-				view.editItem(i);
-			} else if(e.character == SWT.DEL) {
-				taskList.remove(i);
-			}
-		}
-
-		@Override
-		public void keyReleased(KeyEvent e) {}
-		
 	}
 
 }
